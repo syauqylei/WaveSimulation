@@ -1,11 +1,11 @@
 #ifndef INTERPOLATION_H
 #define INTERPOLATION_H
+
 class interp1d {
 	public :
+	double *fi;
 	
-	interp1d(double *x, double *f, int nx, int order);
-	interp1d(double x);
-	interp1d(double *x);
+	interp1d(double *xi, double *x, double *f, int nx, int ord);
 	~interp1d();
 
 	private :
@@ -16,14 +16,15 @@ class interp1d {
 	int n;
 	int loc;
 	int order;
+	int *neigs; //arrays of neighbor points
+
+	double L;
 	
-	double weight_func_lgr(double xi, int order);
-	double interp_lgr(double xi, int order);
-	int index_xi(double xi);
+	double weg(double xi);
+	double interp(double xi);
 	
+	//function to search loc in array
+	void src_loc(double xi, double *x, int order);
 	};
 
-class interp2d {
-	
-	};
 #endif
