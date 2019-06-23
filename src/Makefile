@@ -1,7 +1,7 @@
-CC=pgc++
-OPT=-fast -Minfo=accel
+CC=g++
+OPT=
 
-all :	main.o input.o interp1d.o interp2d.o error.o
+all :	main.o input.o interp1d.o interp2d.o error.o wvesim.o
 	${CC} -std=c++11 *.o -o ../input-data/wvesim $(OPT)
 
 main.o : main.cpp
@@ -15,6 +15,9 @@ interp1d.o : interp1d.cpp
 
 interp2d.o : interp2d.cpp
 	${CC} -std=c++11 -c $(OPT) interp2d.cpp
+
+wvesim.o :	wvesim.cpp
+	${CC} -std=c++11 -c $(OPT) wvesim.cpp
 
 error.o : error.cpp
 	${CC} -std=c++11 -c $(OPT) error.cpp

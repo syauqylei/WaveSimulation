@@ -8,12 +8,12 @@
 
 class interp2d {
 	public :
-	double *fi;
 	
 	interp2d();
-	interp2d(std::vector<double> xi,std::vector<double> yi, int ord,
-				std::vector<double> x, std::vector<double> y, std::vector<double> f);
+	interp2d(std::vector<double> x, std::vector<double> y, std::vector<double> f, int ord);
 	~interp2d();
+	
+	double interp(double xx, double yy);
 
 	private :
 	int order;
@@ -25,7 +25,6 @@ class interp2d {
 	std::vector< std::pair<double,double>> y_dist;
 	std::vector< std::pair<double,double>> f_dist;
 	
-	double interp(double xx, double yy);
 	double euc_dist(double x, double y, double xx, double yy);
 	void cal_dist(double xx, double yy);
 	void sort_dist();

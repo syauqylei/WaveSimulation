@@ -5,28 +5,18 @@
 interp2d::interp2d(){
 	}
 	
-interp2d::interp2d(std::vector<double> xi,std::vector<double> yi, int ord, 
-					std::vector<double> x, std::vector<double> y, std::vector<double> f){
+interp2d::interp2d(std::vector<double> x, std::vector<double> y, std::vector<double> f, int ord){
 	x_raw = x;
 	y_raw = y;
 	f_raw = f;
 	order = ord;
-	int len = xi.size();
-	double check_dist;
-	fi = new double[len];	
-	std::cout<<"size of Velmod"<< len<<std::endl;
-	for (int i=0;i<len;i++){
-		std::cout<<i <<" ";
-		check_dist=euc_dist(xi[i],yi[i],x[i],y[i]);
-		if(check_dist  == 0){continue;}
-		fi[i]=interp(xi[i],yi[i]);
-		}
 	}
 
 
 double interp2d::interp(double xx, double yy){
 	double fx;
 	double Upr,Bot;
+	
 	//searchin nearest neighbors
 	cal_dist(xx,yy);
 	sort_dist();
@@ -72,7 +62,5 @@ void interp2d::clear_vect(){
 	f_dist.clear();
 	}
 
-  
 interp2d::~interp2d(){
-	delete [] fi;
 	}

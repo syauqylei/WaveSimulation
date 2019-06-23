@@ -8,8 +8,6 @@
 input::input(){
 	Nx=0;
 	Ny=0;
-	Nx_ext=0;
-	Ny_ext=0;
 	Nt=0;
 	xloc=0;
 	yloc=0;
@@ -30,24 +28,7 @@ input::input(std::string filename){
 	read_srcfunc();
 	std::cout<< "Reading Source Function File  is done\n";
 	
-	std::cout<< "Extending model \n";
-	for (int i=0;i<Ny;i++){
-		for(int j=0;j<Nx;j++){
-			xx_vel.push_back(j);
-			yy_vel.push_back(i);
-			}
-		}	
-	for (int i=-nb;i<Ny+nb;i++){
-		for(int j=-nb;j<Nx+nb;j++){
-			xx_vel_ext.push_back(j);
-			yy_vel_ext.push_back(i);
-			}
-		}
-	//extending domain
-	Nx_ext=2*nb+Nx;
-	Ny_ext=2*nb+Ny;
-	
-	velmod = new double[Nx_ext*Ny_ext];
+	velmod = new double[Nx*Ny];
 	std::cout<< "Velocity Model is being read \n";
 	read_velmod(); //read velmod
 	
@@ -101,24 +82,14 @@ void input::read_srcfunc(){
 	}
 
 void input::read_velmod(){
-	std::ifstream v_file;
-	
-	v_file.open(f_velmod);
+	std::ifstream v_file(f_velmod);
 	
 	if (v_file.is_open() == false) {throw (Exception("FILE","File doesn't exist or File can't be opened"));}
 	
 	int i=0;
 	double val;
-	while (v_file >> val){velmod_raw.push_back(val);i++;}
+	while (v_file >> val){velmod[i]=val;i++;}
 	v_file.close();
-	interp2d intrp_vel(xx_vel_ext,yy_vel_ext, 13, 
-						xx_vel,yy_vel, velmod_raw);
-	
-	for (int i=0;i<Ny_ext;i++){
-		for(int j=0 ;j<Nx_ext;j++){
-			velmod[i*Nx_ext+j]=intrp_vel.fi[i*Nx_ext+j];
-			}
-		}
 }
 
 input::~input(){
