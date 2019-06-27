@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include "interp1d.h"
-#include "interp2d.h"
 #include "error.h"
 class input: public interp1d {
 	public :
@@ -17,9 +16,10 @@ class input: public interp1d {
 	int xloc;
 	int yloc;
 	
-	
 	double *velmod;
 	double *srcfunc;
+	
+	std::string f_out;
 	
 	input();
 	input(std::string filename);
@@ -32,7 +32,6 @@ class input: public interp1d {
 	
 	std::string f_velmod;
 	std::string f_srcfunc;
-	std::string f_out;
 	
 	void read_parms(std::string fname);
 	void read_srcfunc();
