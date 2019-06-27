@@ -376,7 +376,7 @@ void wvesim::bottom_cpml(){
 			for(int j=0;j<nb;j++){
 				psix_u_bt[i][nb-1-j]=b[j]*psix_u_bt[i][nb-1-j]+(b[j]-1.0)
 							*((Un[1][Nx*Ny-(j+3)*Nx+i]-2.0*Un[1][Nx*Ny-(j+2)*Nx+i]+Un[1][Nx*Ny-(j+1)*Nx+i])/h/h
-								+(phix_u_bt[i][nb-1-j]-phix_u_bt[i][nb-2-j])/h);
+							+(phix_u_bt[i][nb-j]-phix_u_bt[i][nb-1-j])/h);
 								
 				Un[2][Nx*Ny-(j+2)*Nx+i]+=ext_velmod[Nx*Ny-(j+2)*Nx+i]*ext_velmod[Nx*Ny-(j+2)*Nx+i]*dt*dt
 									*(psix_u_bt[i][nb-1-j]+(phix_u_bt[i][nb-j]-phix_u_bt[i][nb-j-1])/h);
@@ -390,13 +390,12 @@ void wvesim::bottom_cpml(){
 			for(int j=0;j<nb;j++){
 				psix_w_bt[i][nb-1-j]=b[j]*psix_w_bt[i][nb-1-j]+(b[j]-1.0)
 							*((Wn[1][Nx*Ny-(j+3)*Nx+i]-2.0*Wn[1][Nx*Ny-(j+2)*Nx+i]+Wn[1][Nx*Ny-(j+1)*Nx+i])/h/h
-								+(phix_w_bt[i][nb-1-j]-phix_w_bt[i][nb-2-j])/h);
+								+(phix_w_bt[i][nb-j]-phix_w_bt[i][nb-1-j])/h);
 								
 				Wn[2][Nx*Ny-(j+2)*Nx+i]+=ext_velmod[Nx*Ny-(j+2)*Nx+i]*ext_velmod[Nx*Ny-(j+2)*Nx+i]*dt*dt
 									*(psix_w_bt[i][nb-1-j]+(phix_w_bt[i][nb-j]-phix_w_bt[i][nb-j-1])/h);
 				}
 		}
-	
 	
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
@@ -405,7 +404,7 @@ void wvesim::bottom_cpml(){
 			for(int j=0;j<nb;j++){
 				psix_v_bt[i][nb-1-j]=b[j]*psix_v_bt[i][nb-1-j]+(b[j]-1.0)
 							*((Vn[1][Nx*Ny-(j+3)*Nx+i]-2.0*Vn[1][Nx*Ny-(j+2)*Nx+i]+Vn[1][Nx*Ny-(j+1)*Nx+i])/h/h
-								+(phix_v_bt[i][nb-1-j]-phix_v_bt[i][nb-2-j])/h);
+								+(phix_v_bt[i][nb-j]-phix_v_bt[i][nb-1-j])/h);
 								
 				Vn[2][Nx*Ny-(j+2)*Nx+i]+=ext_velmod[Nx*Ny-(j+2)*Nx+i]*ext_velmod[Nx*Ny-(j+2)*Nx+i]*dt*dt
 									*(psix_v_bt[i][nb-1-j]+(phix_v_bt[i][nb-j]-phix_v_bt[i][nb-j-1])/h);
@@ -656,9 +655,9 @@ double wvesim::d5y(double *u,double *u_y,int i){
 
 void wvesim::write_txt(std::string f_name){
 	std::ofstream file(f_name);
-	for(int i=0;i<Ny;i++){
-		for(int j=0;j<Nx;j++){
-			file << std::setprecision(3)<<std::setw(5)<< Un[2][i*Nx+j] << "\t";
+	for(int i=0;i<ny;i++){
+		for(int j=0;j<nx;j++){
+			file << std::setprecision(3)<<std::setw(5)<< Un[2][(nb+1+i)*Nx+(nb+1+j)] << "\t";
 			}
 			file << std::endl;
 		}
