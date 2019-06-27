@@ -1,11 +1,11 @@
-VelMod velocity.txt
-Nx	600
-Ny	249
-Nt	4000
-dt	0.002
-h	20
+VelMod VelBP2004left30.txt
+Nx	500
+Ny	250
+h	30
+T	8
+Ts	0.002
 
 SrcFunc srcfunc.txt
-SrcLoc	300	0
+SrcLoc	250	0
 
 Out rec.txt
