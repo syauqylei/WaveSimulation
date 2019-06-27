@@ -151,19 +151,19 @@ wvesim::wvesim( input fwd_input) {
 	src_loc =(nb+1+fwd_input.yloc)*(Nx)+(nb+1+fwd_input.xloc);
 	record= alloc_array(nt,nx);
 	for (int i=0;i<nt-1;i++){
-		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< std::setw(5)<<std::setprecision(2) << double(i+1)/double(nt)*100 <<"%\n";}
+		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< std::setw(3)<<std::setprecision(1) << double(i+2)/double(nt)*100 <<"%\n";}
 		Un[1][src_loc]=src_func[i];
 		for (int j=0;j<nx;j++){
 			record[i][j]=Un[1][(nb+1)*Nx+nb+1+j];
 		}
 		wve_calc();
 		wve_update();
-		
+		/*
 		std::string name="output";
 		std::stringstream ss;
 		ss<<i;
 		std::string fname=name+ss.str()+".txt";
-		write_txt(fname);
+		write_txt(fname);*/
 		}
 	
 	for (int j=0;j<nx;j++){
