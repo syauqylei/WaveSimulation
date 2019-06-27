@@ -140,9 +140,15 @@ wvesim::wvesim( input fwd_input) {
 	init_cpml_parm();
 	src_loc =(nb+1+fwd_input.yloc)*(Nx)+(nb+1+fwd_input.xloc);
 	
+	record= alloc_array(nt,nx);
 	for (int i=0;i<nt;i++){
 		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< double(i+1)/double(nt)*100 <<"%\n";}
 		Un[1][src_loc] = -fwd_input.srcfunc[i];
+		
+		for (int j=0;j<nx;j++){
+			record[i][j]=Un[1][(nb+1)*Nx+nb+1+j];
+		}
+		
 		wve_calc();
 		wve_update();
 		
@@ -152,7 +158,8 @@ wvesim::wvesim( input fwd_input) {
 		std::string fname=name+ss.str()+".txt";
 		write_txt(fname);
 		}
-	
+
+	write_rec(fwd_input.f_out);
 	}
 
 wvesim::~wvesim(){
@@ -658,6 +665,17 @@ void wvesim::write_txt(std::string f_name){
 	for(int i=0;i<ny;i++){
 		for(int j=0;j<nx;j++){
 			file << std::setprecision(3)<<std::setw(5)<< Un[2][(nb+1+i)*Nx+(nb+1+j)] << "\t";
+			}
+			file << std::endl;
+		}
+	file.close();
+	}
+
+void wvesim::write_rec(std::string f_name){
+	std::ofstream file(f_name);
+	for(int i=0;i<nt;i++){
+		for(int j=0;j<nx;j++){
+			file << std::setprecision(3)<<std::setw(5)<< record[i][j] << "\t";
 			}
 			file << std::endl;
 		}

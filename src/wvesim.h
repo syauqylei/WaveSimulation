@@ -10,6 +10,7 @@ const double R = 0.001;
 class wvesim {
 	
 	public:
+	double **record;
 	wvesim();
 	wvesim(input fwd_input);
 	~wvesim();
@@ -32,8 +33,6 @@ class wvesim {
 	
 	double *ext_velmod;
 	double *velmod;
-	
-	
 	
 	void extend_velmod();
 	double iwd_interp(double xi, double yi ,double *y, double *x, double *f, int len);
@@ -102,7 +101,9 @@ class wvesim {
 	double **psix_v_bt;
 	double **phix_v_bt;
 	void bottom_cpml();
+	
 	void write_txt(std::string f_name);
+	void write_rec(std::string f_name);
 	
 	double **alloc_array(const int nrows, const int ncols);
 	void free_array_mem(double **mat);
