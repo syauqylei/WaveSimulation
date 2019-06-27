@@ -19,17 +19,12 @@ input::input(){
 
 input::input(std::string filename){
 	
-	std::cout<< "Reading Forward Parameters \n";
 	read_parms(filename);//read parameters non-array
-	
-	std::cout<< "Reading Source Function File \n";
 	srcfunc = new double[Nt];
 	for (int i=0;i<Nt;i++){ t_src.push_back( dt*i);}
 	read_srcfunc();
-	std::cout<< "Reading Source Function File  is done\n";
 	
 	velmod = new double[Nx*Ny];
-	std::cout<< "Velocity Model is being read \n";
 	read_velmod(); //read velmod
 	
 	}
