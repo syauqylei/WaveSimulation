@@ -18,19 +18,18 @@ wvesim::wvesim( input fwd_input) {
 	ny = fwd_input.Ny;
 	
 	h = fwd_input.h;
-	dt = fwd_input.dt;
 	
 	Nx = 2*nb+2+fwd_input.Nx;
 	Ny = 2*nb+2+fwd_input.Ny;
-	NX = 2*nb+fwd_input.Nx;;
-	NY = 2*nb+fwd_input.Nx;;
-	nt = fwd_input.Nt;
+	NX = 2*nb+fwd_input.Nx;
+	NY = 2*nb+fwd_input.Nx;
 	dim = Nx*Ny;
 	velmod=fwd_input.velmod;
 	
-	vmax=*std::max_element(velmod,velmod+nx*ny);
-	
-	
+	vmax=*std::max_element(velmod,velmod+nx*ny);		
+	dt = cfl*h/vmax;
+	nt = int(fwd_input.T/dt);
+	std::cout<<" dt = "<<dt <<std::endl;
 	ext_velmod = new double[dim];
 	Un = alloc_array(3, dim);
 	Wn = alloc_array(3, dim);
@@ -137,18 +136,26 @@ wvesim::wvesim( input fwd_input) {
 			}
 		}
 		
-	init_cpml_parm();
-	src_loc =(nb+1+fwd_input.yloc)*(Nx)+(nb+1+fwd_input.xloc);
+	//creating approriate source function by interp1d
+	src_func = new double[nt];
+	src_t = new double[nt];
 	
+	interp1d src_interp(3,fwd_input.t_src,fwd_input.srcfunc);
+	for (int i=0 ;i<nt;i++){
+		src_t[i]=i*dt;
+		src_func[i]=src_interp.interp(i*dt);
+		}
+	
+	init_cpml_parm();
+	
+	src_loc =(nb+1+fwd_input.yloc)*(Nx)+(nb+1+fwd_input.xloc);
 	record= alloc_array(nt,nx);
-	for (int i=0;i<nt;i++){
-		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< double(i+1)/double(nt)*100 <<"%\n";}
-		Un[1][src_loc] = -fwd_input.srcfunc[i];
-		
+	for (int i=0;i<nt-1;i++){
+		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< std::setw(5)<<std::setprecision(2) << double(i+1)/double(nt)*100 <<"%\n";}
+		Un[1][src_loc]=src_func[i];
 		for (int j=0;j<nx;j++){
 			record[i][j]=Un[1][(nb+1)*Nx+nb+1+j];
 		}
-		
 		wve_calc();
 		wve_update();
 		
@@ -158,7 +165,11 @@ wvesim::wvesim( input fwd_input) {
 		std::string fname=name+ss.str()+".txt";
 		write_txt(fname);
 		}
-
+	
+	for (int j=0;j<nx;j++){
+			record[nt-1][j]=Un[2][(nb+1)*Nx+nb+1+j];
+		}
+		
 	write_rec(fwd_input.f_out);
 	}
 
@@ -167,6 +178,8 @@ wvesim::~wvesim(){
 	delete [] ext_velmod;
 	delete [] velmod;
 	delete [] b;
+	delete [] src_func;
+	delete [] src_t;
 	
 	free_array_mem(Un);
 	free_array_mem(Wn);

@@ -8,20 +8,16 @@
 input::input(){
 	Nx=0;
 	Ny=0;
-	Nt=0;
 	xloc=0;
 	yloc=0;
-	dt=0;
+	Ts=0;
 	h=0;
-	srcfunc=NULL;
 	velmod=NULL;
 	}
 
 input::input(std::string filename){
 	
 	read_parms(filename);//read parameters non-array
-	srcfunc = new double[Nt];
-	for (int i=0;i<Nt;i++){ t_src.push_back( dt*i);}
 	read_srcfunc();
 	
 	velmod = new double[Nx*Ny];
@@ -41,9 +37,9 @@ void input::read_parms(std::string filename){
 		if (i==1){f_velmod = content ;}
 		if (i==3){Nx = std::stoi(content,&sz);}
 		if (i==5){Ny = std::stoi(content,&sz);}
-		if (i==7){Nt = std::stoi(content,&sz);}
-		if (i==9){dt = std::stod(content,&sz);}
-		if (i==11){h = std::stod(content,&sz);}
+		if (i==7){h = std::stod(content,&sz);}
+		if (i==9){T = std::stod(content,&sz);}
+		if (i==11){Ts = std::stod(content,&sz);}
 		if (i==13){f_srcfunc = content ;}
 		if (i==15){xloc = std::stoi(content,&sz);}
 		if (i==16){yloc = std::stoi(content,&sz);}
@@ -62,18 +58,12 @@ void input::read_srcfunc(){
 	double a;
 	double b;
 	while (file_src >> a >> b){
-		t_src_raw.push_back(a);
-		srcfunc_raw.push_back(b);
+		t_src.push_back(a);
+		srcfunc.push_back(b);
 		i++;
 		}
 	file_src.close();
-	
-	//interpolate
-	interp1d intrp(t_src, 5, t_src_raw, srcfunc_raw);
-	
-	for (int i=0;i<Nt;i++){
-		srcfunc[i]=intrp.fi[i];
-		}
+
 	}
 
 void input::read_velmod(){
@@ -88,6 +78,5 @@ void input::read_velmod(){
 }
 
 input::~input(){
-	delete [] srcfunc;
 	delete [] velmod;
 	}

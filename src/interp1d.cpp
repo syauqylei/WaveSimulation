@@ -4,7 +4,12 @@
 
 interp1d::interp1d(){
 	}
-	
+
+interp1d::interp1d(int ord, std::vector<double> x, std::vector<double> f){
+	x_raw = x;
+	f_raw = f;
+	order = ord;
+	}
 interp1d::interp1d(std::vector<double> xi, int ord, std::vector<double> x, std::vector<double> f){
 	x_raw = x;
 	f_raw = f;

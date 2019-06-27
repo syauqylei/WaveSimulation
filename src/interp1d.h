@@ -11,9 +11,11 @@ class interp1d {
 	double *fi;
 	
 	interp1d();
+	interp1d(int ord, std::vector<double> x, std::vector<double> f);
 	interp1d(std::vector<double> xi, int ord, std::vector<double> x, std::vector<double> f);
 	~interp1d();
 
+	double interp(double xx);
 	private :
 	int order;
 	std::vector<double> x_raw;
@@ -22,7 +24,6 @@ class interp1d {
 	std::vector< std::pair<double,double>> x_dist;
 	std::vector< std::pair<double,double>> f_dist;
 	
-	double interp(double xx);
 	void cal_dist(double xx);
 	void sort_dist();
 	void clear_vect();

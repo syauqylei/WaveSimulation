@@ -2,10 +2,15 @@
 #define WVESIM_H
 
 #include "input.h"
+#include "interp1d.h"
 #include <vector>
 #include <algorithm>
+//CPML paramter
 const int nb = 40;
 const double R = 0.001;
+
+//CFL condition
+double const cfl=0.5;
 
 class wvesim {
 	
@@ -33,7 +38,8 @@ class wvesim {
 	
 	double *ext_velmod;
 	double *velmod;
-	
+	double *src_func;
+	double *src_t;
 	void extend_velmod();
 	double iwd_interp(double xi, double yi ,double *y, double *x, double *f, int len);
 	

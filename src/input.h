@@ -7,17 +7,19 @@ class input: public interp1d {
 	public :
 	int Nx;
 	int Ny;
-	int Nt;
 	
 	double dt;
+	double Ts;
 	double h;
+	double T;
 	
 	//soure location
 	int xloc;
 	int yloc;
 	
 	double *velmod;
-	double *srcfunc;
+	std::vector<double> srcfunc;
+	std::vector<double> t_src;
 	
 	std::string f_out;
 	
@@ -26,9 +28,6 @@ class input: public interp1d {
 	~input();
 	
 	private:
-	std::vector<double> t_src;
-	std::vector<double> t_src_raw;
-	std::vector<double> srcfunc_raw;
 	
 	std::string f_velmod;
 	std::string f_srcfunc;
