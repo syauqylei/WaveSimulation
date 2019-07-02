@@ -1,7 +1,7 @@
 CC=g++
 OPT=
 
-all :	main.o input.o interp1d.o error.o wvesim.o
+all :	main.o input.o interp1d.o error.o wvesim.o rtm.o
 	${CC} -std=c++11 *.o -o ../input-data/wvesim $(OPT)
 
 main.o : main.cpp
@@ -19,6 +19,10 @@ wvesim.o :	wvesim.cpp
 
 error.o : error.cpp
 	${CC} -std=c++11 -c $(OPT) error.cpp
+
+rtm.o : rtm.cpp
+	${CC} -std=c++11 -c $(OPT) rtm.cpp
+
 
 clean :
 	rm *.o

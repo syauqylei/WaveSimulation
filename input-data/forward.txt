@@ -1,11 +1,11 @@
-VelMod VelBP2004left30.txt
-Nx	500
-Ny	250
-h	30
-T	8
+VelMod marm10.txt
+Nx	900
+Ny	350	
+h	10
+T	6	
 Ts	0.002
 
 SrcFunc srcfunc.txt
-SrcLoc	250	0
+SrcLoc	450	0
 
-Out rec.txt
+Out recmarm10.txt

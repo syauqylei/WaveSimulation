@@ -10,7 +10,7 @@ const int nb = 40;
 const double R = 0.001;
 
 //CFL condition
-double const cfl=0.5;
+double const cfl=0.508;
 
 class wvesim {
 	
@@ -19,6 +19,8 @@ class wvesim {
 	wvesim();
 	wvesim(input fwd_input);
 	~wvesim();
+	double **alloc_array(const int nrows, const int ncols);
+	void free_array_mem(double **mat);
 
 	private:
 	int dim;
@@ -68,6 +70,7 @@ class wvesim {
 	double *b;
 	double vmax;
 	void init_cpml_parm();
+	void init_arrays();
 	
 	double **Un;
 	double **Wn;

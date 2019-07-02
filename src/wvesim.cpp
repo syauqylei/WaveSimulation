@@ -30,103 +30,11 @@ wvesim::wvesim( input fwd_input) {
 	dt = cfl*h/vmax;
 	nt = int(fwd_input.T/dt);
 	std::cout<<" dt = "<<dt <<std::endl;
-	ext_velmod = new double[dim];
-	Un = alloc_array(3, dim);
-	Wn = alloc_array(3, dim);
-	Vn = alloc_array(3, dim);
-	
-	//auxilaries var for CPML
-	//left
-	psix_u_lf = alloc_array(Ny, nb);
-	phix_u_lf = alloc_array(Ny, (nb+1));
-	psix_w_lf = alloc_array(Ny, nb);
-	phix_w_lf = alloc_array(Ny, (nb+1));
-	psix_v_lf = alloc_array(Ny, nb);
-	phix_v_lf = alloc_array(Ny, (nb+1));
-	
-	//right
-	psix_u_rt = alloc_array(Ny, nb);
-	phix_u_rt = alloc_array(Ny, (nb+1));
-	psix_w_rt = alloc_array(Ny, nb);
-	phix_w_rt = alloc_array(Ny, (nb+1));
-	psix_v_rt = alloc_array(Ny, nb);
-	phix_v_rt = alloc_array(Ny, (nb+1));
-	
-	
-	//top
-	psix_u_tp = alloc_array(Nx, nb);
-	phix_u_tp = alloc_array(Nx, (nb+1));
-	psix_w_tp = alloc_array(Nx, nb);
-	phix_w_tp = alloc_array(Nx, (nb+1));
-	psix_v_tp = alloc_array(Nx, nb);
-	phix_v_tp = alloc_array(Nx, (nb+1));
-	
-	//bottom
-	psix_u_bt = alloc_array(Nx, nb);
-	phix_u_bt = alloc_array(Nx, (nb+1));
-	psix_w_bt = alloc_array(Nx, nb);
-	phix_w_bt = alloc_array(Nx, (nb+1));
-	psix_v_bt = alloc_array(Nx, nb);
-	phix_v_bt = alloc_array(Nx, (nb+1));
-	
 	//extend_velmod
 	extend_velmod();
 	init_cpml_parm();
 	
-	//initiate values to array container
-	for(int i=0;i<Ny;i++){
-		for(int j=0;j<nb;j++){
-			psix_u_lf[i][j]=0.0;
-			psix_w_lf[i][j]=0.0;
-			psix_v_lf[i][j]=0.0;
-			
-			psix_u_rt[i][j]=0.0;
-			psix_w_rt[i][j]=0.0;
-			psix_v_rt[i][j]=0.0;
-		}
-		for(int j=0;j<nb+1;j++){
-			phix_v_rt[i][j]=0.0;
-			phix_w_rt[i][j]=0.0;
-			phix_u_rt[i][j]=0.0;
-			
-			phix_u_lf[i][j]=0.0;
-			phix_w_lf[i][j]=0.0;
-			phix_v_lf[i][j]=0.0;
-		}
-	}
-	
-	for(int i=0;i<Nx;i++){
-		for(int j=0;j<nb;j++){
-			psix_u_tp[i][j]=0.0;
-			psix_w_tp[i][j]=0.0;
-			psix_v_tp[i][j]=0.0;
-			
-			psix_u_bt[i][j]=0.0;
-			psix_w_bt[i][j]=0.0;
-			psix_v_bt[i][j]=0.0;
-			}
-		for (int j=0;j<nb+1;j++){
-			phix_v_tp[i][j]=0.0;
-			phix_u_tp[i][j]=0.0;
-			phix_w_tp[i][j]=0.0;
-			
-			phix_v_bt[i][j]=0.0;
-			phix_u_bt[i][j]=0.0;
-			phix_w_bt[i][j]=0.0;
-			}
-		}
-		
-	for (int i=0;i<dim;i++){
-		Un[0][i]=0;
-		Wn[0][i]=0;
-		Vn[0][i]=0;
-		Wn[1][i]=0;
-		Vn[1][i]=0;
-		Un[1][i]=0;
-		Wn[2][i]=0;
-		Vn[2][i]=0;
-		Un[2][i]=0;
-		}
+	init_arrays();
 	
 	//creating index to calculate from
 	idx =  new int[(NX)*(NY)];
@@ -152,7 +60,7 @@ wvesim::wvesim( input fwd_input) {
 	record= alloc_array(nt,nx);
 	for (int i=0;i<nt-1;i++){
 		if((i+1)%(nt/10) == 0) {std::cout<<"Calculating Wavefields .... "<< std::setw(3)<<std::setprecision(1) << double(i+2)/double(nt)*100 <<"%\n";}
-		Un[1][src_loc]=src_func[i];
+		Un[1][src_loc]=-src_func[i];
 		for (int j=0;j<nx;j++){
 			record[i][j]=Un[1][(nb+1)*Nx+nb+1+j];
 		}
@@ -210,6 +118,103 @@ wvesim::~wvesim(){
 	free_array_mem(phix_v_bt);
 	}
 
+void wvesim::init_arrays(){
+	
+	ext_velmod = new double[dim];
+	Un = alloc_array(3, dim);
+	Wn = alloc_array(3, dim);
+	Vn = alloc_array(3, dim);
+	
+	//auxilaries var for CPML
+	//left
+	psix_u_lf = alloc_array(Ny, nb);
+	phix_u_lf = alloc_array(Ny, (nb+1));
+	psix_w_lf = alloc_array(Ny, nb);
+	phix_w_lf = alloc_array(Ny, (nb+1));
+	psix_v_lf = alloc_array(Ny, nb);
+	phix_v_lf = alloc_array(Ny, (nb+1));
+	
+	//right
+	psix_u_rt = alloc_array(Ny, nb);
+	phix_u_rt = alloc_array(Ny, (nb+1));
+	psix_w_rt = alloc_array(Ny, nb);
+	phix_w_rt = alloc_array(Ny, (nb+1));
+	psix_v_rt = alloc_array(Ny, nb);
+	phix_v_rt = alloc_array(Ny, (nb+1));
+	
+	
+	//top
+	psix_u_tp = alloc_array(Nx, nb);
+	phix_u_tp = alloc_array(Nx, (nb+1));
+	psix_w_tp = alloc_array(Nx, nb);
+	phix_w_tp = alloc_array(Nx, (nb+1));
+	psix_v_tp = alloc_array(Nx, nb);
+	phix_v_tp = alloc_array(Nx, (nb+1));
+	
+	//bottom
+	psix_u_bt = alloc_array(Nx, nb);
+	phix_u_bt = alloc_array(Nx, (nb+1));
+	psix_w_bt = alloc_array(Nx, nb);
+	phix_w_bt = alloc_array(Nx, (nb+1));
+	psix_v_bt = alloc_array(Nx, nb);
+	phix_v_bt = alloc_array(Nx, (nb+1));
+	
+	//initiate values to array container
+	for(int i=0;i<Ny;i++){
+		for(int j=0;j<nb;j++){
+			psix_u_lf[i][j]=0.0;
+			psix_w_lf[i][j]=0.0;
+			psix_v_lf[i][j]=0.0;
+			
+			psix_u_rt[i][j]=0.0;
+			psix_w_rt[i][j]=0.0;
+			psix_v_rt[i][j]=0.0;
+		}
+		for(int j=0;j<nb+1;j++){
+			phix_v_rt[i][j]=0.0;
+			phix_w_rt[i][j]=0.0;
+			phix_u_rt[i][j]=0.0;
+			
+			phix_u_lf[i][j]=0.0;
+			phix_w_lf[i][j]=0.0;
+			phix_v_lf[i][j]=0.0;
+		}
+	}
+	
+	for(int i=0;i<Nx;i++){
+		for(int j=0;j<nb;j++){
+			psix_u_tp[i][j]=0.0;
+			psix_w_tp[i][j]=0.0;
+			psix_v_tp[i][j]=0.0;
+			
+			psix_u_bt[i][j]=0.0;
+			psix_w_bt[i][j]=0.0;
+			psix_v_bt[i][j]=0.0;
+			}
+		for (int j=0;j<nb+1;j++){
+			phix_v_tp[i][j]=0.0;
+			phix_u_tp[i][j]=0.0;
+			phix_w_tp[i][j]=0.0;
+			
+			phix_v_bt[i][j]=0.0;
+			phix_u_bt[i][j]=0.0;
+			phix_w_bt[i][j]=0.0;
+			}
+		}
+		
+	for (int i=0;i<dim;i++){
+		Un[0][i]=0;
+		Wn[0][i]=0;
+		Vn[0][i]=0;
+		Wn[1][i]=0;
+		Vn[1][i]=0;
+		Un[1][i]=0;
+		Wn[2][i]=0;
+		Vn[2][i]=0;
+		Un[2][i]=0;
+		}
+	}
+	
 void wvesim::init_cpml_parm(){
 	b=new double[nb+1];
 	
