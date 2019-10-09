@@ -113,9 +113,6 @@ class wvesim {
 	
 	void write_txt(std::string f_name);
 	void write_rec(std::string f_name);
-	
-	double **alloc_array(const int nrows, const int ncols);
-	void free_array_mem(double **mat);
 	};
 
 #endif

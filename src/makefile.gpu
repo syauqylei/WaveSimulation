@@ -1,8 +1,9 @@
-CC=g++
-OPT=
+CC=pgc++
+OPT= -ta=tesla:ccall,managed -Minfo=accel
+NOPT=-fast -Minfo=opt  $(OPT)
 
-all :	main.o input.o interp1d.o error.o wvesim.o rtm.o
-	${CC} -std=c++11 *.o -o ../input-data/wvesim $(OPT)
+all :	main.o input.o interp1d.o error.o wvesim.o
+	${CC} -std=c++11 *.o -o ../input-data/wvesimgpu $(OPT)
 
 main.o : main.cpp
 	${CC} -std=c++11 -c $(OPT) main.cpp
@@ -19,10 +20,6 @@ wvesim.o :	wvesim.cpp
 
 error.o : error.cpp
 	${CC} -std=c++11 -c $(OPT) error.cpp
-
-rtm.o : rtm.cpp
-	${CC} -std=c++11 -c $(OPT) rtm.cpp
-
 
 clean :
 	rm *.o

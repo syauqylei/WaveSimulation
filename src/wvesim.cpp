@@ -1,4 +1,4 @@
-#include <iostream>
+-#include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
@@ -31,10 +31,9 @@ wvesim::wvesim( input fwd_input) {
 	nt = int(fwd_input.T/dt);
 	std::cout<<" dt = "<<dt <<std::endl;
 	//extend_velmod
+	init_arrays();
 	extend_velmod();
 	init_cpml_parm();
-	
-	init_arrays();
 	
 	//creating index to calculate from
 	idx =  new int[(NX)*(NY)];
@@ -66,12 +65,6 @@ wvesim::wvesim( input fwd_input) {
 		}
 		wve_calc();
 		wve_update();
-		/*
-		std::string name="output";
-		std::stringstream ss;
-		ss<<i;
-		std::string fname=name+ss.str()+".txt";
-		write_txt(fname);*/
 		}
 	
 	for (int j=0;j<nx;j++){
@@ -228,6 +221,7 @@ void wvesim::init_cpml_parm(){
 	}
 
 void wvesim::wve_calc(){
+	#pragma acc kernels
 	for (int i=0;i<(NX)*(NY);i++){
 			int index=idx[i];
 			double c1=ext_velmod[index]*ext_velmod[index]*dt*dt;
@@ -264,6 +258,7 @@ void wvesim::wve_calc(){
 
 void wvesim::left_cpml(){
 	//left_cmpl
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_u_lf[i][j]=b[j]*phix_u_lf[i][j]+(b[j]-1.0)*(Un[1][i*Nx+j+2]-Un[1][i*Nx+j+1])/h;
@@ -277,6 +272,8 @@ void wvesim::left_cpml(){
 									*(psix_u_lf[i][j]+(phix_u_lf[i][j+1]-phix_u_lf[i][j])/h);
 				}
 		}
+	
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_w_lf[i][j]=b[j]*phix_w_lf[i][j]+(b[j]-1.0)*(Wn[1][i*Nx+j+2]-Wn[1][i*Nx+j+1])/h;
@@ -290,6 +287,8 @@ void wvesim::left_cpml(){
 									*(psix_w_lf[i][j]+(phix_w_lf[i][j+1]-phix_w_lf[i][j])/h);
 				}
 		}
+	
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_v_lf[i][j]=b[j]*phix_v_lf[i][j]+(b[j]-1.0)*(Vn[1][i*Nx+j+2]-Vn[1][i*Nx+j+1])/h;
@@ -307,6 +306,8 @@ void wvesim::left_cpml(){
 
 void wvesim::right_cpml(){
 	//right_cmpl
+	
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_u_rt[i][nb-j]=b[j]*phix_u_rt[i][nb-j]+(b[j]-1.0)*(Un[1][i*Nx+Nx-j-2]-Un[1][i*Nx+Nx-j-3])/h;
@@ -320,6 +321,8 @@ void wvesim::right_cpml(){
 									*(psix_u_rt[i][nb-1-j]+(phix_u_rt[i][nb-j]-phix_u_rt[i][nb-1-j])/h);
 				}
 		}
+	
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_w_rt[i][nb-j]=b[j]*phix_w_rt[i][nb-j]+(b[j]-1.0)*(Wn[1][i*Nx+Nx-j-2]-Wn[1][i*Nx+Nx-j-3])/h;
@@ -333,6 +336,8 @@ void wvesim::right_cpml(){
 									*(psix_w_rt[i][nb-1-j]+(phix_w_rt[i][nb-j]-phix_w_rt[i][nb-1-j])/h);
 				}
 		}
+	
+	#pragma acc kernels
 	for (int i=1;i<Ny-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_v_rt[i][nb-j]=b[j]*phix_v_rt[i][nb-j]+(b[j]-1.0)*(Vn[1][i*Nx+Nx-j-2]-Vn[1][i*Nx+Nx-j-3])/h;
@@ -350,6 +355,8 @@ void wvesim::right_cpml(){
 
 void wvesim::top_cpml(){
 	//top
+	
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_u_tp[i][j]=b[j]*phix_u_tp[i][j]+(b[j]-1)*(Un[1][(j+2)*Nx+i]-Un[1][(j+1)*Nx+i])/h;
@@ -364,6 +371,7 @@ void wvesim::top_cpml(){
 				}
 		}
 	
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_w_tp[i][j]=b[j]*phix_w_tp[i][j]+(b[j]-1)*(Wn[1][(j+2)*Nx+i]-Wn[1][(j+1)*Nx+i])/h;
@@ -378,6 +386,8 @@ void wvesim::top_cpml(){
 				}
 		}
 	
+	
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_v_tp[i][j]=b[j]*phix_v_tp[i][j]+(b[j]-1)*(Vn[1][(j+2)*Nx+i]-Vn[1][(j+1)*Nx+i])/h;
@@ -394,6 +404,7 @@ void wvesim::top_cpml(){
 	}
 void wvesim::bottom_cpml(){
 	//bottom
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_u_bt[i][nb-j]=b[j]*phix_u_bt[i][nb-j]+(b[j]-1)*(Un[1][Nx*Ny-(j+2)*Nx+i]-Un[1][Nx*Ny-(j+3)*Nx+i])/h;
@@ -408,6 +419,7 @@ void wvesim::bottom_cpml(){
 				}
 		}
 	
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_w_bt[i][nb-j]=b[j]*phix_w_bt[i][nb-j]+(b[j]-1)*(Wn[1][Nx*Ny-(j+2)*Nx+i]-Wn[1][Nx*Ny-(j+3)*Nx+i])/h;
@@ -422,6 +434,7 @@ void wvesim::bottom_cpml(){
 				}
 		}
 	
+	#pragma acc kernels
 	for (int i=1;i<Nx-1;i++){
 			for(int j=0;j<nb+1;j++){
 				phix_v_bt[i][nb-j]=b[j]*phix_v_bt[i][nb-j]+(b[j]-1)*(Vn[1][Nx*Ny-(j+2)*Nx+i]-Vn[1][Nx*Ny-(j+3)*Nx+i])/h;
@@ -439,6 +452,8 @@ void wvesim::bottom_cpml(){
 	}
 
 void wvesim::wve_update(){
+	
+		#pragma acc kernels
 		for (int i=0;i<dim;i++){
 		Un[0][i]=Un[1][i];
 		Wn[0][i]=Wn[1][i];
@@ -583,37 +598,51 @@ double wvesim::iwd_interp(double xi, double yi ,double *y, double *x, double *f,
 	return fx;
 	}
 
+#pragma acc routine seq
 double wvesim::dxf(double *u,int i){
 	return
 	(u[i+1]-u[i])/h;}
 
+#pragma acc routine seq
 double wvesim::dxb(double *u,int i){
 	return
 	(u[i]-u[i-1])/h;}
 
+
+#pragma acc routine seq
 double wvesim::dyf(double *u,int i){
 	return
 	(u[i+Nx]-u[i])/h;} 
 
+
+#pragma acc routine seq
 double wvesim::dyb(double *u,int i){
 	return
 	(u[i]-u[i-Nx])/h;}
 
+
+#pragma acc routine seq
 double wvesim::d2x(double *u,int i){
 	return
 	(u[i-1]-2.0*u[i]+u[i+1])/h/h;
 	}
 
+
+#pragma acc routine seq
 double wvesim::d2y(double *u,int i){
 	return
 	(u[i-Nx]-2.0*u[i]+u[i+Nx])/h/h;
 	}
 
+
+#pragma acc routine seq
 double wvesim::d2xd2y(double *u,int i){
 	return 
 	(u[i+1]+u[i-1]+u[i+Nx]+u[i-Nx]-4.0*u[i])/h/h;
 	}
-	
+
+
+#pragma acc routine seq
 double wvesim::d2x2y(double *u,double *u_x,double *u_y,int i){
 	return
 	(2.0*(u[i+1]+u[i-1]+u[i+Nx]+u[i-Nx]-2.0*u[i])
@@ -624,18 +653,21 @@ double wvesim::d2x2y(double *u,double *u_x,double *u_y,int i){
 		-2.0*u_y[i+Nx]+2.0*u_y[i-Nx])/h/h/h/2.0;
 	}
 
+#pragma acc routine seq
 double wvesim::d4x(double *u, double *u_x,int i){
 	return
 	-12.0/h/h/h/h*(u[i+1]+u[i-1]-2.0*u[i])
 	+6.0/h/h/h*(u_x[i+1]-u_x[i-1]);
 	}
 
+#pragma acc routine seq
 double wvesim::d4y(double *u, double *u_y,int i){
 	return
 	-12.0/h/h/h/h*(u[i+Nx]+u[i-Nx]-2.0*u[i])
 	+6.0/h/h/h*(u_y[i+Nx]-u_y[i-Nx]);
 	}
 
+#pragma acc routine seq
 double wvesim::d3x2y(double *u, double *u_x,int i){
 	return
 	-3.0/2.0/h/h/h/h/h*(u[i+Nx+1]-u[i-1-Nx]+u[i+1-Nx]
@@ -644,12 +676,14 @@ double wvesim::d3x2y(double *u, double *u_x,int i){
 						+u_x[i+1-Nx]-2.0*u_x[i+1]-2.0*u_x[i-1]);
 	}
 
+#pragma acc routine seq
 double wvesim::d5x(double *u, double *u_x,int i){
 	return
 	-90.0/h/h/h/h/h*(u[i+1]-u[i-1])
 	+30.0/h/h/h/h*(u_x[i+1]+4.0*u_x[i]+u_x[i-1]);
 	}
 
+#pragma acc routine seq
 double wvesim::dx4y(double *u, double *u_y,int i){
 	return
 	-6.0/h/h/h/h/h*(u[i+Nx+1]-u[i-1-Nx]-u[i-1+Nx]
@@ -657,6 +691,7 @@ double wvesim::dx4y(double *u, double *u_y,int i){
 	+3.0/h/h/h/h*(u_y[i+1+Nx]+u_y[i-1-Nx]-u_y[i-1+Nx]-u_y[i+1-Nx]);
 }
 	
+#pragma acc routine seq
 double wvesim::d2x3y(double *u, double *u_y,int i){
 	return
 	-3.0/2.0/h/h/h/h/h*(u[i+Nx+1]-u[i-1-Nx]+u[i-1+Nx]
@@ -665,6 +700,7 @@ double wvesim::d2x3y(double *u, double *u_y,int i){
 						+u_y[i+1-Nx]-2.0*u_y[i+Nx]-2.0*u_y[i-Nx]);
 	}
 
+#pragma acc routine seq
 double wvesim::d4xy(double *u,double *u_x,int i){
 	return
 	-6.0/h/h/h/h/h*(u[i+Nx+1]-u[i-1-Nx]+u[i-1+Nx]
@@ -672,6 +708,7 @@ double wvesim::d4xy(double *u,double *u_x,int i){
 	+3.0/h/h/h/h*(u_x[i+1+Nx]+u_x[i-1-Nx]-u_x[i-1+Nx]-u_x[i+1-Nx]);
 	}
 
+#pragma acc routine seq
 double wvesim::d5y(double *u,double *u_y,int i){
 	return
 	-90.0/h/h/h/h/h*(u[i+Nx]-u[i-Nx])
