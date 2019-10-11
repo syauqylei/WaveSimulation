@@ -13,7 +13,7 @@ numba
 
 ## How to use
 The simulation runs with python script. You need to load the package of '''wave''' and instantiate ''' wave ''' class. The arguments are the grid size of the velocity model, the duration of simulation and the velocity array in form of 2D numpy array.
-gen_records.py is the python script example
+gen_records.py is a python script example
 
 ```
 python gen_records.py
