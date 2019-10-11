@@ -21,7 +21,7 @@ python gen_records.py
 
 ## Authors
 
-* **Syauqy L. EL Ilhami** - *Initial work* - [email](syauqilenterano@gmail.com)
+* **Syauqy L. EL Ilhami** - [email](syauqilenterano@gmail.com)
 
 See also the list of [contributors](https://github.com/syauqylei/WaveSimulation/contributors) who participated in this project.
 
