@@ -1,6 +1,6 @@
 # Wave Simulation
 
-Codes for Seismic Wave Simulation. This project consists finite-difference methods and Stereo Modeling By [Yang et al](https://doi.org/10.1111/j.1365-2478.2011.01033.x)
+Codes for Seismic Wave Simulation. This project consists of implementation of wave equation using finite-difference methods and Stereo Modeling By [Yang et al](https://doi.org/10.1111/j.1365-2478.2011.01033.x)
 
 ## Prerequisites
 
