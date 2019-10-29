@@ -87,13 +87,17 @@ class wave:
         self.method = meth
     
    
-    def disp(self,i_show = 0):
+    def disp(self,i_show = 0,pause = 0.1):
         """ Display the wavefield map every a multiple of n-iteration
         """
+        plt.ion()
+        plt.clf()
+        plt.axis('off')
         if i_show != 0  and self.n_iter % i_show == 0:
-            plt.imshow(self.U,cmap="seismic",vmax=max(self.src),vmin=-max(self.src))
-            plt.show()
-    
+            plt.imshow(self.U,cmap="gray",vmax=max(self.src),vmin=-max(self.src))
+            plt.pause(pause)
+        plt.show()
+
     def extend_velocity(self):
         """ Extend velocity due to CMPL Boundary condition
         """
@@ -190,8 +194,10 @@ class wave:
             self.Up=self.U
             self.U=ptr
             self.record[i] = self.U[self.n_cmpl+self.ext_cells,self.n_cmpl+self.ext_cells:-self.n_cmpl-self.ext_cells]
+            
+            #plot
             self.disp(self.i_show)
-        
+            
         end = timer()
         
         print("Runtime ",end-start ,"s")

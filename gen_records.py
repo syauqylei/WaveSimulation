@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import wave.wave as wave
+import wave.wve as wave
 import numpy as np
 
 #create velocty model
